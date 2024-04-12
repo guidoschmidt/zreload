@@ -13,12 +13,10 @@ pub fn init(self: *FileWatcher) void {
 }
 
 pub fn watch(self: *FileWatcher) !void {
-    while (true) {
-        for (self.file_sources.items) |*source| {
-            if (try source.reloadOnModified(self.allocator)) {
-                const cb = self.callbacks.get(source.file_path).?;
-                try cb(source.buffer);
-            }
+    for (self.file_sources.items) |*source| {
+        if (try source.reloadOnModified(self.allocator)) {
+            const cb = self.callbacks.get(source.file_path).?;
+            try cb(source.buffer);
         }
     }
 }

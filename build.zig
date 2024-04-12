@@ -1,7 +1,7 @@
 const std = @import("std");
 
 pub fn build(b: *std.Build) void {
-    const zreload_module = b.addModule("zosc", .{
+    const zreload_module = b.addModule("zreload", .{
         .root_source_file = .{ .path = "src/lib.zig" },
         .imports = &.{},
     });
