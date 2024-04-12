@@ -21,8 +21,14 @@ pub fn watch(self: *FileWatcher) !void {
     }
 }
 
+fn loop(self: *FileWatcher) !void {
+    while (true) {
+        try self.watch();
+    }
+}
+
 pub fn asyncWatch(self: *FileWatcher) !void {
-    _ = try std.Thread.spawn(.{}, watch, .{self});
+    _ = try std.Thread.spawn(.{}, loop, .{self});
 }
 
 pub fn addFile(self: *FileWatcher, file_path: []const u8, cb: *const fn ([]const u8) anyerror!void) !void {
