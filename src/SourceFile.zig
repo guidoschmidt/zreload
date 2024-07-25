@@ -16,11 +16,9 @@ pub fn load(self: *SourceFile, file_path: []const u8, allocator: std.mem.Allocat
     self.mtime = stat.mtime;
     self.buffer = try allocator.alloc(u8, stat.size);
     _ = try self.file.read(self.buffer);
-    try self.file.sync();
 }
 
 pub fn reload(self: *SourceFile, allocator: std.mem.Allocator) !void {
-    try self.file.sync();
     std.debug.print("\nRELOAD {d} -- {s}", .{ self.counter, self.file_path });
     allocator.free(self.buffer);
 
@@ -34,7 +32,6 @@ pub fn reload(self: *SourceFile, allocator: std.mem.Allocator) !void {
     // self.buffer = try std.mem.replaceOwned(u8, allocator, self.buffer, " = ", "=");
     // self.buffer = try std.mem.replaceOwned(u8, allocator, self.buffer, "\n", "");
 
-    try self.file.sync();
     self.counter += 1;
 
     self.mtime = stat.mtime;

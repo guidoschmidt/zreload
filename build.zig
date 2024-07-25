@@ -2,7 +2,7 @@ const std = @import("std");
 
 pub fn build(b: *std.Build) void {
     const zreload_module = b.addModule("zreload", .{
-        .root_source_file = .{ .path = "src/lib.zig" },
+        .root_source_file = b.path("src/lib.zig"),
         .imports = &.{},
     });
 
@@ -12,7 +12,7 @@ pub fn build(b: *std.Build) void {
 
     const exe = b.addExecutable(.{
         .name = "shade",
-        .root_source_file = .{ .path = "src/example.zig" },
+        .root_source_file = b.path("src/example.zig"),
         .target = target,
         .optimize = optimize,
     });
