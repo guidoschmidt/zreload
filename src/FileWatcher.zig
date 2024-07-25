@@ -3,6 +3,7 @@ const SourceFile = @import("SourceFile.zig");
 
 const FileWatcher = @This();
 
+watch_thread: std.Thread = undefined,
 allocator: std.mem.Allocator,
 file_sources: std.ArrayList(SourceFile) = undefined,
 callbacks: std.StringHashMap(*fn ([]const u8) anyerror!void) = undefined,
@@ -28,7 +29,7 @@ fn loop(self: *FileWatcher) !void {
 }
 
 pub fn asyncWatch(self: *FileWatcher) !void {
-    _ = try std.Thread.spawn(.{}, loop, .{self});
+    self.watch_thread = try std.Thread.spawn(.{}, loop, .{ self });
 }
 
 pub fn addFile(self: *FileWatcher, file_path: []const u8, cb: *const fn ([]const u8) anyerror!void) !void {
@@ -36,4 +37,10 @@ pub fn addFile(self: *FileWatcher, file_path: []const u8, cb: *const fn ([]const
     try source.load(file_path, self.allocator);
     try self.file_sources.append(source);
     try self.callbacks.put(source.file_path, @constCast(cb));
+}
+
+pub fn deinit(self: *FileWatcher) void {
+    self.watch_thread.join();
+    self.file_sources.deinit();
+    self.callbacks.deinit();
 }
